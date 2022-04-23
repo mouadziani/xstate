@@ -4,15 +4,16 @@ namespace Mouadziani\XState;
 
 use Closure;
 use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
+use Mouadziani\XState\Exceptions\TransitionNotDefinedException;
 
 class StateMachine
 {
-    private array $states = [];
+    public array $states;
 
     /** @var Transition[] */
     private array $transitions;
 
-    private ?string $defaultState = null;
+    public ?string $defaultState;
 
     private ?string $currentState = null;
 
@@ -40,9 +41,23 @@ class StateMachine
         return $this;
     }
 
+    public function addState(string $state): self
+    {
+        $this->states[] = $state;
+
+        return $this;
+    }
+
     public function transitions(array $transitions): self
     {
         $this->transitions = $transitions;
+
+        return $this;
+    }
+
+    public function addTransition(Transition $transition): self
+    {
+        $this->transitions[] = $transition;
 
         return $this;
     }
@@ -66,23 +81,53 @@ class StateMachine
         return $this->currentState;
     }
 
-//    public function transitionTo(string $trigger): self
-//    {
-//        if (! $this->canBe($state)) {
-//            throw new TransitionNotAllowedException('Transition not allowed');
-//        }
-//
-//        call_user_func($this->beforeEachTransition, $this->currentState, $state);
-//
-//        $this->currentState = $state;
-//
-//        call_user_func($this->afterTransition, $this->currentState, $state);
-//
-//        return $this;
-//    }
-
-    public function canBe(string $state): bool
+    public function transitionTo(string $trigger): self
     {
-        return in_array($state, $this->states[$this->currentState] ?? []);
+        /** @var Transition $transition */
+        $transition = array_filter($this->transitions, fn ($transition) =>
+            $transition->trigger === $trigger
+        )[0] ?? null;
+
+        if (! $transition) {
+            throw new TransitionNotDefinedException('Transition not defined');
+        }
+
+        if ($transition->from !== $this->currentState()) {
+            throw new TransitionNotAllowedException('Transition not allowed');
+        }
+
+        if ($this->beforeEachTransition) {
+            call_user_func($this->beforeEachTransition, $this->currentState, $transition->to);
+        }
+
+        if ($transition->beforeHook) {
+            call_user_func($transition->beforeHook, $this->currentState, $transition->to);
+        }
+
+        $this->currentState = $transition->to;
+
+        if ($this->afterTransition) {
+            call_user_func($this->afterTransition, $this->currentState, $transition->to);
+        }
+
+        if ($transition->afterHook) {
+            call_user_func($transition->afterHook, $this->currentState, $transition->to);
+        }
+
+        return $this;
+    }
+
+    public function canTransisteTo(string $trigger): bool
+    {
+        /** @var Transition $transition */
+        $transition = array_filter($this->transitions, fn ($transition) =>
+            $transition->trigger === $trigger
+        );
+
+        if (! $transition || $transition->from !== $this->currentState()) {
+            return false;
+        }
+
+        return true;
     }
 }
