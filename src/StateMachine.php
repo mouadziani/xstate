@@ -17,6 +17,10 @@ class StateMachine
 
     private ?string $currentState = null;
 
+    private ?Closure $beforeEachTransition;
+
+    private ?Closure $afterEachTransition;
+
     public static function make(): self
     {
         return new static();
@@ -81,30 +85,18 @@ class StateMachine
     {
         /** @var Transition $transition */
         $transition = array_values(
-            array_filter(
-                $this->transitions,
-                fn ($transition) =>
-                $transition->trigger === $trigger
-            ) ?? []
+            array_filter( $this->transitions, fn ($transition) =>  $transition->trigger === $trigger) ?? []
         )[0] ?? null;
 
         if (! $transition) {
             throw new TransitionNotDefinedException('Transition not defined');
         }
 
-        if ($transition->from !== $this->currentState()) {
+        if (in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])) {
             throw new TransitionNotAllowedException('Transition not allowed');
         }
 
-        if ($transition->beforeHook) {
-            call_user_func($transition->beforeHook, $this->currentState, $transition->to);
-        }
-
-        $this->currentState = $transition->to;
-
-        if ($transition->afterHook) {
-            call_user_func($transition->afterHook, $this->currentState, $transition->to);
-        }
+        $transition->handle($this->currentState, $this->beforeEachTransition, $this->afterEachTransition);
 
         return $this;
     }
@@ -112,12 +104,10 @@ class StateMachine
     public function canTransisteTo(string $trigger): bool
     {
         /** @var Transition $transition */
-        $transition = array_filter(
-            $this->transitions,
-            fn ($transition) =>
+        $transition = array_filter($this->transitions, fn ($transition) =>
             $transition->trigger === $trigger
         );
 
-        return $transition && $transition->from === $this->currentState();
+        return $transition && in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
     }
 }

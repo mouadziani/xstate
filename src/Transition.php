@@ -7,12 +7,12 @@ use Closure;
 class Transition
 {
     public string $trigger;
-    public string $from;
+    public string|array $from;
     public string $to;
     public ?Closure $beforeHook;
     public ?Closure $afterHook;
 
-    public function __construct(string $trigger, string $from, string $to, ?Closure $beforeHook = null, ?Closure $afterHook = null)
+    public function __construct(string $trigger, string|array $from, string $to, ?Closure $beforeHook = null, ?Closure $afterHook = null)
     {
         $this->trigger = $trigger;
         $this->from = $from;
@@ -21,8 +21,14 @@ class Transition
         $this->afterHook = $afterHook;
     }
 
-    public static function fromArray(array $options): self
+    public function handle(string &$currentState, ?Closure $beforeTransition = null, ?Closure $afterTransition = null): void
     {
-        return new static($options['trigger'], $options['from'], $options['to'], $options['beforeHook'], $options['afterHook']);
+        $beforeTransition && $beforeTransition($this->from, $this->to);
+        $this->beforeHook && call_user_func($this->beforeHook, $this->from, $this->to);
+
+        $currentState = $this->to;
+
+        $afterTransition && $afterTransition($this->from, $this->to);
+        $this->afterHook && call_user_func($this->afterHook, $this->from, $this->to);
     }
 }

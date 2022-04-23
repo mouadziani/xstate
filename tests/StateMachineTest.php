@@ -10,7 +10,7 @@ it('can get the current state', function () {
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
         ->transitions([
-            new Transition('PLAY', 'stopped', 'playing'),
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
             new Transition('STOP', 'playing', 'stopped'),
             new Transition('PAUSE', 'playing', 'paused'),
             new Transition('RESUME', 'paused', 'playing'),
@@ -25,7 +25,7 @@ it('can be transited', function () {
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
         ->transitions([
-            new Transition('PLAY', 'stopped', 'playing'),
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
             new Transition('STOP', 'playing', 'stopped'),
             new Transition('PAUSE', 'playing', 'paused'),
             new Transition('RESUME', 'paused', 'playing'),
@@ -50,7 +50,7 @@ it('throws exception when transition is not allowed', function () {
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
         ->transitions([
-            new Transition('PLAY', 'stopped', 'playing'),
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
             new Transition('STOP', 'playing', 'stopped'),
             new Transition('PAUSE', 'playing', 'paused'),
             new Transition('RESUME', 'paused', 'playing'),
@@ -69,7 +69,7 @@ it('throws exception when transition is not defined', function () {
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
         ->transitions([
-            new Transition('PLAY', 'stopped', 'playing'),
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
             new Transition('STOP', 'playing', 'stopped'),
             new Transition('PAUSE', 'playing', 'paused'),
             new Transition('RESUME', 'paused', 'playing'),
@@ -84,7 +84,7 @@ it('can add new transition', function () {
         ->defaultState('playing')
         ->states(['playing', 'stopped', 'paused'])
         ->transitions([
-            new Transition('PLAY', 'stopped', 'playing'),
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
             new Transition('STOP', 'playing', 'stopped'),
             new Transition('PAUSE', 'playing', 'paused'),
         ]);
