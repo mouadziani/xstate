@@ -9,22 +9,23 @@ class StateMachine
 {
     private array $states = [];
 
-    private array $transitions = [];
+    /** @var Transition[] */
+    private array $transitions;
 
-    private mixed $defaultState = null;
+    private ?string $defaultState = null;
 
-    private mixed $currentState = null;
+    private ?string $currentState = null;
 
-    private Closure $beforeTransition;
+    private ?Closure $beforeEachTransition = null;
 
-    private Closure $afterTransition;
+    private ?Closure $afterTransition = null;
 
     public static function make(): self
     {
         return new static;
     }
 
-    public function defaultState(mixed $default)
+    public function defaultState(string $default): self
     {
         $this->defaultState = $default;
         $this->currentState = $default;
@@ -32,55 +33,55 @@ class StateMachine
         return $this;
     }
 
-    public function states(array $states)
+    public function states(array $states): self
     {
         $this->states = $states;
 
         return $this;
     }
 
-    public function transitions(array $transitions)
+    public function transitions(array $transitions): self
     {
         $this->transitions = $transitions;
 
         return $this;
     }
 
-    public function beforeTransition(Closure $beforeTransition)
+    public function beforeEachTransition(Closure $beforeEachTransition): self
     {
-        $this->beforeTransition = $beforeTransition;
+        $this->beforeEachTransition = $beforeEachTransition;
 
         return $this;
     }
 
-    public function afterTransition(Closure $afterTransition)
+    public function afterEachTransition(Closure $afterTransition): self
     {
         $this->afterTransition = $afterTransition;
 
         return $this;
     }
 
-    public function currentState(): mixed
+    public function currentState(): string
     {
         return $this->currentState;
     }
 
-    public function transitionTo(mixed $state): self
-    {
-        if (! $this->canBe($state)) {
-            throw new TransitionNotAllowedException('Transition not allowed');
-        }
+//    public function transitionTo(string $trigger): self
+//    {
+//        if (! $this->canBe($state)) {
+//            throw new TransitionNotAllowedException('Transition not allowed');
+//        }
+//
+//        call_user_func($this->beforeEachTransition, $this->currentState, $state);
+//
+//        $this->currentState = $state;
+//
+//        call_user_func($this->afterTransition, $this->currentState, $state);
+//
+//        return $this;
+//    }
 
-        call_user_func($this->beforeTransition, $this->currentState, $state);
-
-        $this->currentState = $state;
-
-        call_user_func($this->afterTransition, $this->currentState, $state);
-
-        return $this;
-    }
-
-    public function canBe(mixed $state): bool
+    public function canBe(string $state): bool
     {
         return in_array($state, $this->states[$this->currentState] ?? []);
     }
