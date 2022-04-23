@@ -7,17 +7,17 @@ use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 
 class StateMachine
 {
-    public array $states = [];
+    private array $states = [];
 
-    public array $transitions = [];
+    private array $transitions = [];
 
-    public mixed $defaultState = null;
+    private mixed $defaultState = null;
 
-    public mixed $currentState = null;
+    private mixed $currentState = null;
 
-    public Closure $beforeTransition;
+    private Closure $beforeTransition;
 
-    public Closure $afterTransition;
+    private Closure $afterTransition;
 
     public static function make(): self
     {
