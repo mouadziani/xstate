@@ -85,7 +85,7 @@ class StateMachine
     {
         /** @var Transition $transition */
         $transition = array_values(
-            array_filter( $this->transitions, fn ($transition) =>  $transition->trigger === $trigger) ?? []
+            array_filter($this->transitions, fn ($transition) => $transition->trigger === $trigger) ?? []
         )[0] ?? null;
 
         if (! $transition) {
@@ -104,7 +104,9 @@ class StateMachine
     public function canTransisteTo(string $trigger): bool
     {
         /** @var Transition $transition */
-        $transition = array_filter($this->transitions, fn ($transition) =>
+        $transition = array_filter(
+            $this->transitions,
+            fn ($transition) =>
             $transition->trigger === $trigger
         );
 
