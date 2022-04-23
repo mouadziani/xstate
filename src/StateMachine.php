@@ -17,10 +17,6 @@ class StateMachine
 
     private ?string $currentState = null;
 
-    private ?Closure $beforeEachTransition = null;
-
-    private ?Closure $afterTransition = null;
-
     public static function make(): self
     {
         return new static();
@@ -84,8 +80,10 @@ class StateMachine
     public function transitionTo(string $trigger): self
     {
         /** @var Transition $transition */
-        $transition = array_filter($this->transitions, fn ($transition) =>
-            $transition->trigger === $trigger
+        $transition = array_values(
+            array_filter($this->transitions, fn ($transition) =>
+                $transition->trigger === $trigger
+            ) ?? []
         )[0] ?? null;
 
         if (! $transition) {
@@ -96,19 +94,11 @@ class StateMachine
             throw new TransitionNotAllowedException('Transition not allowed');
         }
 
-        if ($this->beforeEachTransition) {
-            call_user_func($this->beforeEachTransition, $this->currentState, $transition->to);
-        }
-
         if ($transition->beforeHook) {
             call_user_func($transition->beforeHook, $this->currentState, $transition->to);
         }
 
         $this->currentState = $transition->to;
-
-        if ($this->afterTransition) {
-            call_user_func($this->afterTransition, $this->currentState, $transition->to);
-        }
 
         if ($transition->afterHook) {
             call_user_func($transition->afterHook, $this->currentState, $transition->to);
@@ -124,10 +114,6 @@ class StateMachine
             $transition->trigger === $trigger
         );
 
-        if (! $transition || $transition->from !== $this->currentState()) {
-            return false;
-        }
-
-        return true;
+        return $transition && $transition->from === $this->currentState();
     }
 }
