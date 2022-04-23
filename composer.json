@@ -1,6 +1,6 @@
 {
     "name": "mouadziani/xstate",
-    "description": "A lightweight php library to implement state machine pattern into your php project",
+    "description": "State machine library to play with finite workflows into your php project",
     "keywords": [
         "mouadziani",
         "state machine",

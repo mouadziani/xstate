@@ -1,5 +1,6 @@
-# X-State for PHP
-A lightweight php library to implement state machine pattern into your php project
+## XState - A State Machine for PHP
+
+State machine library to play with finite workflows into your php project
 
 ## Installation
 
@@ -9,7 +10,21 @@ You can install the package via composer:
 composer require mouadziani/xstate
 ```
 
-## Usage
+## WIP - Usage
+
+```php
+
+$video = StateMachine::make()
+    ->defaultState('stopped')
+    ->states(['playing', 'stopped', 'paused'])
+    ->transitions([
+        new Transition('PLAY', 'stopped', 'playing'),
+        new Transition('STOP', 'playing', 'stopped'),
+        new Transition('PAUSE', 'playing', 'paused'),
+        new Transition('RESUME', 'paused', 'playing'),
+    ]);
+
+```
 
 ## Testing
 
