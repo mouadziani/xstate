@@ -133,4 +133,3 @@ it('throws exception when transition is not defined', function () {
 
     $video->transitionTo('TURN_OFF');
 })->throws(TransitionNotDefinedException::class);
-

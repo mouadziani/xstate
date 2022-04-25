@@ -5,7 +5,6 @@ namespace Mouadziani\XState;
 use Closure;
 use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 use Mouadziani\XState\Exceptions\TransitionNotDefinedException;
-use Prophecy\Exception\Doubler\MethodNotFoundException;
 
 class StateMachine
 {
@@ -107,7 +106,9 @@ class StateMachine
 
     public function allowedTransitions(): array
     {
-        $allowedTransitions = array_filter($this->transitions, fn ($transition) =>
+        $allowedTransitions = array_filter(
+            $this->transitions,
+            fn ($transition) =>
             in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])
         );
 
