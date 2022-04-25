@@ -1,6 +1,6 @@
 ## XState - A State Machine for PHP
 
-State machine library to play with finite workflows into your php project
+State machine library to play with any complex behavior of your PHP objects
 
 ## Installation
 
