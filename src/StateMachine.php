@@ -10,16 +10,15 @@ class StateMachine
 {
     public array $states;
 
-    /** @var Transition[] */
     private array $transitions;
 
     public ?string $defaultState;
 
     private ?string $currentState = null;
 
-    private ?Closure $beforeEachTransition;
+    private ?Closure $beforeEachTransition = null;
 
-    private ?Closure $afterEachTransition;
+    private ?Closure $afterEachTransition = null;
 
     public static function make(): self
     {
@@ -92,7 +91,7 @@ class StateMachine
             throw new TransitionNotDefinedException('Transition not defined');
         }
 
-        if (in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])) {
+        if (! in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])) {
             throw new TransitionNotAllowedException('Transition not allowed');
         }
 
@@ -106,10 +105,18 @@ class StateMachine
         /** @var Transition $transition */
         $transition = array_filter(
             $this->transitions,
-            fn ($transition) =>
-            $transition->trigger === $trigger
+            fn ($transition) => $transition->trigger === $trigger
         );
 
         return $transition && in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
+    }
+
+    public function allowedTransitions(): array
+    {
+        $allowedTransitions = array_filter($this->transitions, fn ($transition) =>
+            in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])
+        );
+
+        return array_map(fn ($transition) => $transition->trigger, array_values($allowedTransitions));
     }
 }

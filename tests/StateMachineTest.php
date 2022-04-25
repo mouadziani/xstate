@@ -95,3 +95,20 @@ it('can add new transition', function () {
 
     expect($video->currentState())->toBe('paused');
 });
+
+it('can get allowed transitions', function () {
+    $video = StateMachine::make()
+        ->defaultState('playing')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+            new Transition('STOP', 'playing', 'stopped'),
+            new Transition('PAUSE', 'playing', 'paused'),
+        ]);
+
+    expect($video->allowedTransitions())->toMatchArray(['STOP', 'PAUSE']);
+
+    $video->transitionTo('STOP');
+
+    expect($video->allowedTransitions())->toBe(['PLAY']);
+});
