@@ -5,6 +5,7 @@ namespace Mouadziani\XState;
 use Closure;
 use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 use Mouadziani\XState\Exceptions\TransitionNotDefinedException;
+use Prophecy\Exception\Doubler\MethodNotFoundException;
 
 class StateMachine
 {
@@ -82,10 +83,7 @@ class StateMachine
 
     public function transitionTo(string $trigger): self
     {
-        /** @var Transition $transition */
-        $transition = array_values(
-            array_filter($this->transitions, fn ($transition) => $transition->trigger === $trigger) ?? []
-        )[0] ?? null;
+        $transition = $this->findTransition($trigger);
 
         if (! $transition) {
             throw new TransitionNotDefinedException('Transition not defined');
@@ -102,11 +100,7 @@ class StateMachine
 
     public function canTransisteTo(string $trigger): bool
     {
-        /** @var Transition $transition */
-        $transition = array_filter(
-            $this->transitions,
-            fn ($transition) => $transition->trigger === $trigger
-        );
+        $transition = $this->findTransition($trigger);
 
         return $transition && in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
     }
@@ -118,5 +112,21 @@ class StateMachine
         );
 
         return array_map(fn ($transition) => $transition->trigger, array_values($allowedTransitions));
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        if (! $this->findTransition(strtoupper($name))) {
+            throw new TransitionNotDefinedException('Transition not defined');
+        }
+
+        $this->transitionTo(strtoupper($name));
+    }
+
+    private function findTransition(string $trigger): ?Transition
+    {
+        return array_values(
+            array_filter($this->transitions, fn ($transition) => $transition->trigger === $trigger) ?? []
+        )[0] ?? null;
     }
 }

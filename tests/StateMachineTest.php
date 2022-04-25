@@ -20,7 +20,7 @@ it('can get the current state', function () {
 });
 
 
-it('can be transited', function () {
+it('can change machine state after triggering a transition', function () {
     $video = StateMachine::make()
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
@@ -41,6 +41,62 @@ it('can be transited', function () {
     expect($video->currentState())->toBe('playing');
 
     $video->transitionTo('PAUSE');
+    expect($video->currentState())->toBe('paused');
+});
+
+
+it('can add new transition', function () {
+    $video = StateMachine::make()
+        ->defaultState('playing')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+            new Transition('STOP', 'playing', 'stopped'),
+            new Transition('PAUSE', 'playing', 'paused'),
+        ]);
+
+    $video->addTransition(new Transition('PAUSE', 'playing', 'paused'));
+
+    $video->transitionTo('PAUSE');
+
+    expect($video->currentState())->toBe('paused');
+});
+
+it('can get allowed transitions', function () {
+    $video = StateMachine::make()
+        ->defaultState('playing')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+            new Transition('STOP', 'playing', 'stopped'),
+            new Transition('PAUSE', 'playing', 'paused'),
+        ]);
+
+    expect($video->allowedTransitions())->toMatchArray(['STOP', 'PAUSE']);
+
+    $video->transitionTo('STOP');
+
+    expect($video->allowedTransitions())->toBe(['PLAY']);
+});
+
+
+it('can trigger transitions from machine object as method', function () {
+    $video = StateMachine::make()
+        ->defaultState('playing')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+            new Transition('STOP', 'playing', 'stopped'),
+            new Transition('PAUSE', 'playing', 'paused'),
+        ]);
+
+    $video->stop();
+    expect($video->currentState())->toBe('stopped');
+
+    $video->play();
+    expect($video->currentState())->toBe('playing');
+
+    $video->pause();
     expect($video->currentState())->toBe('paused');
 });
 
@@ -78,37 +134,3 @@ it('throws exception when transition is not defined', function () {
     $video->transitionTo('TURN_OFF');
 })->throws(TransitionNotDefinedException::class);
 
-
-it('can add new transition', function () {
-    $video = StateMachine::make()
-        ->defaultState('playing')
-        ->states(['playing', 'stopped', 'paused'])
-        ->transitions([
-            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
-            new Transition('STOP', 'playing', 'stopped'),
-            new Transition('PAUSE', 'playing', 'paused'),
-        ]);
-
-    $video->addTransition(new Transition('PAUSE', 'playing', 'paused'));
-
-    $video->transitionTo('PAUSE');
-
-    expect($video->currentState())->toBe('paused');
-});
-
-it('can get allowed transitions', function () {
-    $video = StateMachine::make()
-        ->defaultState('playing')
-        ->states(['playing', 'stopped', 'paused'])
-        ->transitions([
-            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
-            new Transition('STOP', 'playing', 'stopped'),
-            new Transition('PAUSE', 'playing', 'paused'),
-        ]);
-
-    expect($video->allowedTransitions())->toMatchArray(['STOP', 'PAUSE']);
-
-    $video->transitionTo('STOP');
-
-    expect($video->allowedTransitions())->toBe(['PLAY']);
-});
