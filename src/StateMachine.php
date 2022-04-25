@@ -89,7 +89,7 @@ class StateMachine
             throw new TransitionNotDefinedException('Transition not defined');
         }
 
-        if (! in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])) {
+        if (! in_array($trigger, $this->allowedTransitions())) {
             throw new TransitionNotAllowedException('Transition not allowed');
         }
 
@@ -102,7 +102,7 @@ class StateMachine
     {
         $transition = $this->findTransition($trigger);
 
-        return $transition && in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
+        return $transition && in_array($trigger, $this->allowedTransitions());
     }
 
     public function allowedTransitions(): array
