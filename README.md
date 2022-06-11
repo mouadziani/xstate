@@ -8,7 +8,7 @@ XState is a state machine library to play with any complex behavior of your PHP 
 
 ### Installation
 
-The recommended way to install Guzzle is through 
+The recommended way to install Xstate is through 
 [Composer](https://getcomposer.org/).
 
 ```bash
