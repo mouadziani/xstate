@@ -49,7 +49,7 @@ The `Transition` class expect 3 required params:
 - **From**: Expect a string for a single / or array for multiple initial allowed states
 - **To**: Expect string which is the next target state *(should match one of the defined allowed states)*
 
-### 💡 You can define the whole workflow with a signe statement:
+### 💡 You can define the whole workflow with a single statement:
 
 ```php 
 $video = StateMachine::make()
@@ -110,6 +110,12 @@ $video->allowedTransitions(); // ['STOP', 'PAUSE']
 ```php
 $video->addTransition(new Transition('TURN_OFF', 'playing', 'stopped'));
 ```
+
+## Upcoming features
+
+- [ ] Define/handle hooks before/after triggering transition
+- [ ] Add the ability to define gates for a specific transition
+
 
 ## Testing
 
