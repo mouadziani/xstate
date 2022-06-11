@@ -1,7 +1,8 @@
 ### XState - State Machine for PHP
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/run-tests?label=tests)](https://github.com/mouadziani/xstate/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/Check%20&%20fix%20styling?label=code%20style)](https://github.com/mouadziani/xstate/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-![License](https://img.shields.io/packagist/l/mouadziani/xstate)
+<p align="center" style="margin-top: 1rem; margin-bottom: 1rem;">
+    [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/run-tests?label=tests)](https://github.com/mouadziani/xstate/actions/workflows/run-tests.yml?query=branch%3Amain)
+    [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/Check%20&%20fix%20styling?label=code%20style)](https://github.com/mouadziani/xstate/actions/workflows/php-cs-fixer.yml?query=branch%3Amain)
+</p>
 
 XState is a state machine library to play with any complex behavior of your PHP objects
 
@@ -17,7 +18,7 @@ composer require mouadziani/xstate
 ### Define state machine workflow
 
 <p align="center" style="margin-top: 1rem; margin-bottom: 1rem;">
-    <img height="100px" src="/art/diagram.png" alt="Video state machine diagram"/>
+    <img height="400px" src="/art/diagram.png" alt="Video state machine diagram"/>
 </p>
 
 Let's say we want to define a state machine workflow for a video object, generally a video may have 3 states (playing, stopped, paused),
