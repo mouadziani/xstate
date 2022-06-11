@@ -1,6 +1,6 @@
 ### XState - State Machine for PHP
 
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/run-tests.yml?query=branch%3Amain)](https://github.com/mouadziani/xstate/actions/workflows/run-tests.yml?query=branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/run-tests?label=tests)](https://github.com/mouadziani/xstate/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/mouadziani/xstate/Check%20&%20fix%20styling?label=code%20style)](https://github.com/mouadziani/xstate/actions/workflows/php-cs-fixer.yml?query=branch%3Amain)
 
 XState is a state machine library to play with any complex behavior of your PHP objects
