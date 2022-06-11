@@ -1,7 +1,7 @@
 ### XState - State Machine for PHP
 
 <p align="center" style="margin-top: 1rem; margin-bottom: 1rem;">
-    <img height="400px" src="/art/diagram.png" alt="xstate php logo"/>
+    <img height="400px" src="/art/logo.png" alt="xstate php logo"/>
 </p>
 
 XState is a state machine library to play with any complex behavior of your PHP objects
