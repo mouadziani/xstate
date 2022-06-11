@@ -5,7 +5,6 @@ namespace Mouadziani\XState;
 use Closure;
 use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 use Mouadziani\XState\Exceptions\TransitionNotDefinedException;
-use Prophecy\Exception\Doubler\MethodNotFoundException;
 
 class StateMachine
 {

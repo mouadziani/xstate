@@ -1,29 +1,114 @@
-## XState - A State Machine for PHP
+### XState - State Machine for PHP
 
-State machine library to play with any complex behavior of your PHP objects
+XState is a state machine library to play with any complex behavior of your PHP objects
 
-## Installation
+### Installation
 
-You can install the package via composer:
+You can install it via composer:
 
 ```bash
 composer require mouadziani/xstate
 ```
 
-## WIP - Usage
+### Define state machine graph
+
+Let's say we want to define a state machine workflow for a video object, generally a video may have 3 states (playing, stopped, paused),
+
+as a first step you have to create a new object from `StateMachine` class
 
 ```php
+use \Mouadziani\XState\StateMachine;
 
-$video = StateMachine::make()
+$video = StateMachine::make();
+```
+
+Then you have to define the allowed states as well as the default state
+
+```php
+$video
     ->defaultState('stopped')
+    ->states(['playing', 'stopped', 'paused']);
+```
+
+And finally the transitions
+
+```php
+use \Mouadziani\XState\Transition;
+
+$video->transitions([
+    new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+    new Transition('STOP', 'playing', 'stopped'),
+    new Transition('PAUSE', 'playing', 'paused'),
+    new Transition('RESUME', 'paused', 'playing'),
+]);
+```
+
+The `Transition` class expect 3 required params:
+
+- **Trigger**: As a name of the transition which will be used to trigger a specific transition *(should be unique)*
+- **From**: Expect a string for a single / or array for multiple initial allowed states
+- **To**: Expect string which is the next target state *(should match one of the defined allowed states)*
+
+### 💡 You can define the whole workflow with a signe statement:
+
+```php 
+$video = StateMachine::make()
+    ->defaultState('playing')
     ->states(['playing', 'stopped', 'paused'])
     ->transitions([
-        new Transition('PLAY', 'stopped', 'playing'),
+        new Transition('PLAY', ['stopped', 'paused'], 'playing'),
         new Transition('STOP', 'playing', 'stopped'),
         new Transition('PAUSE', 'playing', 'paused'),
-        new Transition('RESUME', 'paused', 'playing'),
     ]);
+```
 
+### Work with states & transitions
+
+#### Trigger transition
+There are two ways to trigger a specific defined transition
+
+1- Using `transitionTo` method and specify the name of the transition as an argument
+
+```php
+$video->transitionTo('PLAY');
+```
+
+2- Or just calling the name of the transition from your machine object as a method
+
+```php
+$video->play();
+```
+
+Occasionally triggering a transition may throw an exception if the target transition is not defined /or not allowed:
+
+```php
+use \Mouadziani\XState\Exceptions;
+
+try {
+    $video->transitionTo('RESUME');
+} catch (Exceptions\TransitionNotDefinedException $ex) {
+    // the target transition is not defined
+} catch (Exceptions\TransitionNotAllowedException $ex) {
+    // the target transition is not allowed
+}
+```
+
+#### Get the current state
+
+```php
+echo $video->currentState(); // playing
+```
+
+#### Get the allowed transitions
+
+```php
+$video->allowedTransitions(); // ['STOP', 'PAUSE']
+```
+
+#### Adding in-demand transition
+
+```php
+$video->addTransition(new Transition('TURN_OFF', 'playing', 'stopped'));
 ```
 
 ## Testing
