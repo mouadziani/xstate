@@ -10,7 +10,11 @@ You can install it via composer:
 composer require mouadziani/xstate
 ```
 
-### Define state machine graph
+### Define state machine workflow
+
+<p align="center" style="margin-top: 1rem; margin-bottom: 1rem;">
+    <img src="/art/diagram.png" alt="Video state machine diagram"/>
+</p>
 
 Let's say we want to define a state machine workflow for a video object, generally a video may have 3 states (playing, stopped, paused),
 
