@@ -1,5 +1,5 @@
 <p align="center">
-    <img height="400px" src="/art/logo.png" alt="xstate php logo"/>
+    <img src="/art/logo.png" alt="xstate php logo"/>
 </p>
 
 ## XState - State Machine for PHP
