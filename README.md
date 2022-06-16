@@ -4,7 +4,7 @@
 
 ## XState - State Machine for PHP
 
-XState is a state machine library to play with any complex behavior of your PHP objects
+XState is a state machine library to play with any complex behavior of your PHP objects (inspired from [xstate.js](https://github.com/statelyai/xstate))
 
 ### Installation
 
