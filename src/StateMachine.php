@@ -117,10 +117,6 @@ class StateMachine
 
     public function __call(string $name, array $arguments)
     {
-        if (! $this->findTransition(strtoupper($name))) {
-            throw new TransitionNotDefinedException('Transition not defined');
-        }
-
         $this->transitionTo(strtoupper($name));
     }
 
