@@ -82,8 +82,9 @@ class StateMachine
     public function canTransisteTo(string $trigger): bool
     {
         $transition = $this->findTransition($trigger);
+        return $transition->allowed();
 
-        return $transition && in_array($trigger, $this->allowedTransitions());
+        return $transition && $transition->allowed() && in_array($trigger, $this->allowedTransitions());
     }
 
     public function allowedTransitions(): array
