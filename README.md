@@ -8,7 +8,7 @@ XState is a state machine library to play with any complex behavior of your PHP 
 
 ### Installation
 
-The recommended way to install Xstate is through 
+The recommended way to install Xstate is through
 [Composer](https://getcomposer.org/).
 
 ```bash
@@ -57,6 +57,21 @@ The `Transition` class expect 3 required params:
 - **Trigger**: As a name of the transition which will be used to trigger a specific transition *(should be unique)*
 - **From**: Expect a string for a single / or array for multiple initial allowed states
 - **To**: Expect string which is the next target state *(should match one of the defined allowed states)*
+
+#### Guards (optional)
+
+You can either define a guard callback for a specific transition using `guard` method, which must return a bool. If a guard returns false, the transition cannot be performed.
+
+```php
+use \Mouadziani\XState\Transition;
+$video->transitions([
+    (new Transition('PLAY', ['stopped', 'paused'], 'playing'))
+        ->guard(function ($from, $to) {
+            return true;
+        })
+]);
+```
+
 
 ### 💡 You can define the whole workflow with a single statement:
 
@@ -122,8 +137,8 @@ $video->addTransition(new Transition('TURN_OFF', 'playing', 'stopped'));
 
 ## Upcoming features
 
+- [x] Add the ability to define guard for a specific transition
 - [ ] Define/handle hooks before/after triggering transition
-- [ ] Add the ability to define gates for a specific transition
 
 
 ## Testing

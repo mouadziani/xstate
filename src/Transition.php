@@ -3,32 +3,65 @@
 namespace Mouadziani\XState;
 
 use Closure;
+use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 
 class Transition
 {
     public string $trigger;
-    public string|array $from;
-    public string $to;
-    public ?Closure $beforeHook;
-    public ?Closure $afterHook;
 
-    public function __construct(string $trigger, string|array $from, string $to, ?Closure $beforeHook = null, ?Closure $afterHook = null)
+    public string|array $from;
+
+    public string $to;
+
+    private ?Closure $guard = null;
+
+    private ?Closure $before = null;
+
+    private ?Closure $after = null;
+
+    public function __construct(string $trigger, string|array $from, string $to)
     {
         $this->trigger = $trigger;
         $this->from = $from;
         $this->to = $to;
-        $this->beforeHook = $beforeHook;
-        $this->afterHook = $afterHook;
     }
 
-    public function handle(string &$currentState, ?Closure $beforeTransition = null, ?Closure $afterTransition = null): void
+    public function guard(Closure $guard)
     {
-        $beforeTransition && $beforeTransition($this->from, $this->to);
-        $this->beforeHook && call_user_func($this->beforeHook, $this->from, $this->to);
+        $this->guard = $guard;
+
+        return $this;
+    }
+
+    public function before(Closure $before)
+    {
+        $this->before = $before;
+
+        return $this;
+    }
+
+    public function after(Closure $before)
+    {
+        $this->before = $before;
+
+        return $this;
+    }
+
+    public function allowed(): bool
+    {
+        return ! $this->guard || call_user_func($this->guard, $this->from, $this->to);
+    }
+
+    public function handle(string &$currentState): void
+    {
+        if (! $this->allowed()) {
+            throw new TransitionNotAllowedException();
+        }
+
+        $this->before && call_user_func($this->before, $this->from, $this->to);
 
         $currentState = $this->to;
 
-        $afterTransition && $afterTransition($this->from, $this->to);
-        $this->afterHook && call_user_func($this->afterHook, $this->from, $this->to);
+        $this->after && call_user_func($this->after, $this->from, $this->to);
     }
 }

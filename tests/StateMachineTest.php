@@ -133,3 +133,22 @@ it('throws exception when transition is not defined', function () {
 
     $video->transitionTo('TURN_OFF');
 })->throws(TransitionNotDefinedException::class);
+
+it('Uses guard to check if the transition is allowed', function () {
+    $video = StateMachine::make()
+        ->defaultState('stopped')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            (new Transition('PLAY', ['stopped', 'paused'], 'playing'))
+                ->guard(fn ($from, $to) => false),
+
+            (new Transition('TURN_ON', ['stopped', 'paused'], 'playing'))
+                ->guard(fn ($from, $to) => true),
+        ]);
+
+    expect(false)->toBe($video->canTransisteTo('PLAY'));
+    expect(true)->toBe($video->canTransisteTo('TURN_ON'));
+
+    $video->transitionTo('TURN_ON');
+    expect($video->currentState())->toBe('playing');
+});
