@@ -16,10 +16,6 @@ class StateMachine
 
     private ?string $currentState = null;
 
-    private ?Closure $beforeEachTransition = null;
-
-    private ?Closure $afterEachTransition = null;
-
     public static function make(): self
     {
         return new static();
@@ -61,20 +57,6 @@ class StateMachine
         return $this;
     }
 
-    public function beforeEachTransition(Closure $beforeEachTransition): self
-    {
-        $this->beforeEachTransition = $beforeEachTransition;
-
-        return $this;
-    }
-
-    public function afterEachTransition(Closure $afterTransition): self
-    {
-        $this->afterTransition = $afterTransition;
-
-        return $this;
-    }
-
     public function currentState(): string
     {
         return $this->currentState;
@@ -92,7 +74,7 @@ class StateMachine
             throw new TransitionNotAllowedException('Transition not allowed');
         }
 
-        $transition->handle($this->currentState, $this->beforeEachTransition, $this->afterEachTransition);
+        $transition->handle($this->currentState);
 
         return $this;
     }
@@ -106,11 +88,9 @@ class StateMachine
 
     public function allowedTransitions(): array
     {
-        $allowedTransitions = array_filter(
-            $this->transitions,
-            fn ($transition) =>
-            in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from])
-        );
+        $allowedTransitions = array_filter($this->transitions, function ($transition) {
+            return in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
+        });
 
         return array_map(fn ($transition) => $transition->trigger, array_values($allowedTransitions));
     }
