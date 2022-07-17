@@ -55,7 +55,7 @@ class Transition
     public function handle(string &$currentState): void
     {
         if (! $this->allowed()) {
-            throw new TransitionNotAllowedException;
+            throw new TransitionNotAllowedException();
         }
 
         $this->before && call_user_func($this->before, $this->from, $this->to);

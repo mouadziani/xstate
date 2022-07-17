@@ -2,7 +2,6 @@
 
 namespace Mouadziani\XState;
 
-use Closure;
 use Mouadziani\XState\Exceptions\TransitionNotAllowedException;
 use Mouadziani\XState\Exceptions\TransitionNotDefinedException;
 
@@ -82,6 +81,7 @@ class StateMachine
     public function canTransisteTo(string $trigger): bool
     {
         $transition = $this->findTransition($trigger);
+
         return $transition->allowed();
 
         return $transition && $transition->allowed() && in_array($trigger, $this->allowedTransitions());
