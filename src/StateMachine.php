@@ -82,8 +82,6 @@ class StateMachine
     {
         $transition = $this->findTransition($trigger);
 
-        return $transition->allowed();
-
         return $transition && $transition->allowed() && in_array($trigger, $this->allowedTransitions());
     }
 
