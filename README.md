@@ -64,6 +64,7 @@ You can either define a guard callback for a specific transition using `guard` m
 
 ```php
 use \Mouadziani\XState\Transition;
+
 $video->transitions([
     (new Transition('PLAY', ['stopped', 'paused'], 'playing'))
         ->guard(function ($from, $to) {
