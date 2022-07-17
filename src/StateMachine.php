@@ -87,8 +87,8 @@ class StateMachine
 
     public function allowedTransitions(): array
     {
-        $allowedTransitions = array_filter($this->transitions, function ($transition) {
-            return in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
+        $allowedTransitions = array_filter($this->transitions, function (Transition $transition) {
+            return $transition->allowed() && in_array($this->currentState(), is_array($transition->from) ? $transition->from : [$transition->from]);
         });
 
         return array_map(fn ($transition) => $transition->trigger, array_values($allowedTransitions));
