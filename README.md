@@ -74,7 +74,7 @@ $video->transitions([
 ```
 
 
-### 💡 You can define the whole workflow with a single statement:
+### 💡 You can define the whole workflow using a single statement:
 
 ```php 
 $video = StateMachine::make()
