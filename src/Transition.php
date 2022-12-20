@@ -26,21 +26,21 @@ class Transition
         $this->to = $to;
     }
 
-    public function guard(Closure $guard)
+    public function guard(Closure $guard): self
     {
         $this->guard = $guard;
 
         return $this;
     }
 
-    public function before(Closure $before)
+    public function before(Closure $before): self
     {
         $this->before = $before;
 
         return $this;
     }
 
-    public function after(Closure $before)
+    public function after(Closure $before): self
     {
         $this->before = $before;
 
