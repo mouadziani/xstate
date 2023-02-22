@@ -19,7 +19,6 @@ it('can get the current state', function () {
     expect($video->currentState())->toBe('stopped');
 });
 
-
 it('can change machine state after triggering a transition', function () {
     $video = StateMachine::make()
         ->defaultState('stopped')
@@ -43,7 +42,6 @@ it('can change machine state after triggering a transition', function () {
     $video->transitionTo('PAUSE');
     expect($video->currentState())->toBe('paused');
 });
-
 
 it('can add new transition', function () {
     $video = StateMachine::make()
@@ -79,7 +77,6 @@ it('can get allowed transitions', function () {
     expect($video->allowedTransitions())->toBe(['PLAY']);
 });
 
-
 it('can trigger transitions from machine object as method', function () {
     $video = StateMachine::make()
         ->defaultState('playing')
@@ -100,7 +97,6 @@ it('can trigger transitions from machine object as method', function () {
     expect($video->currentState())->toBe('paused');
 });
 
-
 it('throws exception when transition is not allowed', function () {
     $video = StateMachine::make()
         ->defaultState('stopped')
@@ -119,8 +115,7 @@ it('throws exception when transition is not allowed', function () {
     expect($video->currentState())->toBe('paused');
 })->throws(TransitionNotAllowedException::class);
 
-
-it('throws exception when transition is not defined', function () {
+it('throws exception when a transition is not defined at all', function () {
     $video = StateMachine::make()
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
@@ -134,7 +129,7 @@ it('throws exception when transition is not defined', function () {
     $video->transitionTo('TURN_OFF');
 })->throws(TransitionNotDefinedException::class);
 
-it('Uses guard to check if the transition is allowed', function () {
+it('Can define a transition with a guard condition', function () {
     $video = StateMachine::make()
         ->defaultState('stopped')
         ->states(['playing', 'stopped', 'paused'])
@@ -151,4 +146,23 @@ it('Uses guard to check if the transition is allowed', function () {
 
     $video->transitionTo('TURN_ON');
     expect($video->currentState())->toBe('playing');
+});
+
+it('can add multiple transitions at once', function () {
+    $video = StateMachine::make()
+        ->defaultState('playing')
+        ->states(['playing', 'stopped', 'paused'])
+        ->transitions([
+            new Transition('PLAY', ['stopped', 'paused'], 'playing'),
+            new Transition('STOP', 'playing', 'stopped'),
+        ]);
+
+    $video->addTransitions([
+        new Transition('PAUSE', 'playing', 'paused'),
+        new Transition('RESUME', 'paused', 'playing'),
+    ]);
+
+    $video->transitionTo('PAUSE');
+
+    expect($video->currentState())->toBe('paused');
 });
