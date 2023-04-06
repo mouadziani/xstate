@@ -9,7 +9,7 @@ XState is a [state machine](https://statecharts.dev/what-is-a-state-machine.html
 ### Installation
 
 The recommended way to install Xstate is through
-[Composer](https://getcomposer.org/).
+[Composer](https://getcomposer.org/)
 
 ```bash
 composer require mouadziani/xstate
